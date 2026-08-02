@@ -1,0 +1,213 @@
+@import "tailwindcss";
+
+/* Dark base behind the intro curtain (prevents white flash before React mounts) */
+html {
+  background-color: #0c0a09;
+}
+
+/* Hard no-horizontal-scroll: any stray wide element is clipped, never a janky
+   side-scroll on small screens. */
+html,
+body {
+  overflow-x: hidden;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Fluid media + tidy text wrapping for every viewport size */
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-wrap: balance;
+}
+
+p,
+span,
+li {
+  overflow-wrap: break-word;
+  text-wrap: pretty;
+}
+
+/* Lock page scroll while the enter-animation curtain is up */
+html.intro-lock,
+html.intro-lock body {
+  overflow: hidden;
+}
+
+/* Prevent a flash of un-staged content: [data-reveal] starts hidden until
+   GSAP's open-screen reveal has been staged (immediately after mount). */
+[data-reveal] {
+  opacity: 0;
+}
+
+/* Respect reduced motion for the reveal pre-hide too. */
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1 !important;
+  }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Aurora background — static multi-color gradient field (no per-frame
+   background repaint so scrolling & screen recording stay clean & smooth) */
+.aurora {
+  background:
+    radial-gradient(42% 55% at 18% 28%, rgba(16, 185, 129, 0.4), transparent 70%),
+    radial-gradient(42% 55% at 82% 18%, rgba(56, 189, 248, 0.3), transparent 70%),
+    radial-gradient(50% 60% at 50% 82%, rgba(251, 191, 36, 0.22), transparent 70%);
+  background-size: 220% 220%;
+}
+
+/* Floating gradient orbs */
+@keyframes orb-float {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(3%, -6%, 0) scale(1.08); }
+  100% { transform: translate3d(-4%, 4%, 0) scale(0.96); }
+}
+
+.orb {
+  animation: orb-float 12s ease-in-out infinite alternate;
+}
+
+.orb-delay {
+  animation-delay: -6s;
+}
+
+/* Custom Clip Path Reveals */
+.clip-reveal {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  transition: clip-path 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.clip-hidden {
+  clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+}
+
+/* Glassmorphism custom backdrop — kept lightweight for smooth scrolling */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.dark-glass-panel {
+  background: rgba(18, 18, 18, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Respect reduced motion for decorative CSS animations */
+@media (prefers-reduced-motion: reduce) {
+  .orb,
+  .animate-marquee,
+  .dust,
+  .scroll-hint {
+    animation: none;
+  }
+}
+
+/* Animated gradient text */
+@keyframes text-gradient-pan {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.text-gradient-animate {
+  background: linear-gradient(90deg, #34d399, #fbbf24, #a7f3d0, #34d399);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: text-gradient-pan 6s ease-in-out infinite;
+}
+
+/* Shine sweep on hover */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.7s ease;
+}
+
+.btn-shine:hover::after {
+  left: 160%;
+}
+
+/* Ripple click ink */
+@keyframes ripple-expand {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.ripple-ink {
+  position: absolute;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.5);
+  transform: scale(0);
+  animation: ripple-expand 0.6s ease-out forwards;
+  pointer-events: none;
+}
+
+/* Floating dust particles */
+@keyframes dust-float {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  10% { opacity: 0.7; }
+  90% { opacity: 0.5; }
+  100% { transform: translateY(-120px) translateX(24px); opacity: 0; }
+}
+
+.dust {
+  position: absolute;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.6);
+  animation: dust-float 9s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Marquee edge fade masks */
+.marquee-mask {
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
